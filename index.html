@@ -1,44 +1,110 @@
-<!doctype html>
+
 <html>
-    <head>
-        <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-        <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-detector.js"></script>
-        <script src="https://raw.githack.com/AR-js-org/studio-backend/master/src/modules/marker/tools/gesture-handler.js"></script>
-    </head>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+  <body>
+	 <style>
+      body {
+        margin: 0;
+      }
+      .example-container {
+        overflow: hidden;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+     
+      #example-scanning-overlay {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: transparent;
+	z-index: 2;
+      }
+      @media (min-aspect-ratio: 1/1) {
+	#example-scanning-overlay .inner {
+	  width: 50vh;
+	  height: 50vh;
+	}
+      }
+      @media (max-aspect-ratio: 1/1) {
+	#example-scanning-overlay .inner {
+	  width: 80vw;
+	  height: 80vw;
+	}
+      }
 
-    <body style="margin: 0; overflow: hidden;">
-        <a-scene
-            vr-mode-ui="enabled: false;"
-            loading-screen="enabled: false;"
-            renderer="logarithmicDepthBuffer: true;"
-            arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-            id="scene"
-            embedded
-            gesture-detector
-        >
-            <a-assets>
-				<img id="gif" src="assets/dancer.gif">
-				</a-assets>
+      #example-scanning-overlay .inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
 
-				<!-- Marker -->
-				<a-marker
-				type="pattern"
-				preset="custom"
-				url="assets/marker.patt"
-				>
-				<!-- GIF encima del marker -->
-				<a-image
-					src="#gif"
-					rotation="-90 0 0"
-					position="0 0.5 0"
-					width="1"
-					height="1"
-				></a-image>
-			</a-marker>
+	background:
+	  linear-gradient(to right, white 10px, transparent 10px) 0 0,
+	  linear-gradient(to right, white 10px, transparent 10px) 0 100%,
+	  linear-gradient(to left, white 10px, transparent 10px) 100% 0,
+	  linear-gradient(to left, white 10px, transparent 10px) 100% 100%,
+	  linear-gradient(to bottom, white 10px, transparent 10px) 0 0,
+	  linear-gradient(to bottom, white 10px, transparent 10px) 100% 0,
+	  linear-gradient(to top, white 10px, transparent 10px) 0 100%,
+	  linear-gradient(to top, white 10px, transparent 10px) 100% 100%;
+	background-repeat: no-repeat;
+	background-size: 40px 40px;
+      }
 
-            <a-entity camera></a-entity>
-        </a-scene>
-    </body>
+      #example-scanning-overlay.hidden {
+	display: none;
+      }
+
+      #example-scanning-overlay img {
+	opacity: 0.6;
+	width: 90%;
+	align-self: center;
+      }
+
+      #example-scanning-overlay .inner .scanline {
+	position: absolute;
+	width: 100%;
+	height: 10px;
+	background: white;
+	animation: move 2s linear infinite;
+      }
+      @keyframes move {
+	0%, 100% { top: 0% }
+	50% { top: calc(100% - 10px) }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="example-container">
+      <div id="example-scanning-overlay" class="hidden">
+	<div class="inner">
+	  <img src="assets/card.jpg"/>
+	  <div class="scanline"></div>
+	</div>
+      </div>
+    <a-scene mindar-image="imageTargetSrc: assets/targets.mind; maxTrack: 2; uiScanning: #example-scanning-overlay;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-assets>
+        <a-asset-item id="raccoonModel" src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.5/examples/image-tracking/assets/band-example/raccoon/scene.gltf"></a-asset-item>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-gltf-model rotation="0 0 0 " position="0 -0.25 0" scale="0.05 0.05 0.05" src="#raccoonModel" animation-mixer>
+      </a-entity>
+
+    </a-scene>
+	</div>
+  </body>
 </html>
